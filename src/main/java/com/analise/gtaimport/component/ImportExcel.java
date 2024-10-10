@@ -1,5 +1,6 @@
 package com.analise.gtaimport.component;
 
+import com.analise.gtaimport.impl.DownloadExcel;
 import com.analise.gtaimport.impl.ExcelImporter;
 import com.analise.gtaimport.model.*;
 import com.analise.gtaimport.service.*;
@@ -7,6 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +44,13 @@ public class ImportExcel implements CommandLineRunner {
     private List<DemandaEntity> demandaEntities = new ArrayList<>();
     @Autowired
     private DemandaService demandaService;
+    @Autowired
+    private ClassificacaoService classificacaoService;
+
+    @Autowired
+    private EmailService emailService;
+
+    private static String emailReport = "renildosousa75@gmail.com";
 
     @Override
     public void run(String... args) throws Exception {
@@ -45,9 +58,26 @@ public class ImportExcel implements CommandLineRunner {
     }
 
     public void main(String[] args) {
+
         ExcelImporter importer = new ExcelImporter();
         try {
-            Map<String, List<PlanilhaModel>> dados = importer.importarTodasAbas(Paths.get("C:\\Users\\renildosv\\Documents\\_Developer\\planilha.xlsx"));
+            DownloadExcel.main(args);
+            String filePath = "W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx";
+
+            if (Files.exists(Path.of(filePath))) {
+                System.out.println("Arquivo existe.");
+            } else {
+
+//                Email.enviar(emailReport, "Arquivo não existe.", "Hoje :" + new Date().toStringDateAndHour());
+                while (!Files.exists(Path.of(filePath))) {
+                    emailService.enviarEmail(emailReport, "Planilha priorização de demandas", "Por favor ponha o arquivo na pasta pública \\CODES\\Priorização de demandas");
+                    System.out.println("Arquivo não existe.");
+                    Thread.sleep(30 * 60 * 1000);
+                }
+            }
+            classificacaoService.deleteAll();
+            demandaService.deleteAll();
+            Map<String, List<PlanilhaModel>> dados = importer.importarTodasAbas(Paths.get(filePath));
 
             for (List<PlanilhaModel> planilha : dados.values()) {
                 for (PlanilhaModel planilhaModel : planilha) {
@@ -60,6 +90,7 @@ public class ImportExcel implements CommandLineRunner {
             for (DemandaEntity demandaEntity : demandaEntities) {
                 demandaService.salvar(demandaEntity);
             }
+            apagarFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,5 +168,33 @@ public class ImportExcel implements CommandLineRunner {
 //                    demandaEntity.setListaClassificacao(planilhaModel.);
         return demandaEntity;
 
+    }
+
+    public void apagarFile(){
+        File file = new File("W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx");
+
+        if (isFileInUse(file))
+            emailService.enviarEmail("renildosousa75@gmail.com", "Não foi possivel apagar a planilha","Alguém está com o arquivo W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx aberto!");
+
+        if (file.canWrite()) {
+            if (file.delete()) {
+                System.out.println("Arquivo deletado com sucesso.");
+            } else {
+                System.out.println("Falha ao deletar o arquivo.");
+            }
+        } else {
+            System.out.println("Sem permissão para deletar o arquivo.");
+        }
+    }
+
+    // Método para verificar se o arquivo está em uso
+    public static boolean isFileInUse(File file) {
+        try (FileOutputStream fos = new FileOutputStream(file, true)) {
+            // Se o arquivo puder ser aberto para escrita, ele não está em uso
+            return false;
+        } catch (IOException e) {
+            // Se ocorrer uma exceção, o arquivo está em uso
+            return true;
+        }
     }
 }

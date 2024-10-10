@@ -20,6 +20,8 @@ public class ExcelImporter {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    private static final List<String> abas = List.of("ALPHA","TAU","SIGMA","DELTA","OMEGA");
+
     public Map<String, List<PlanilhaModel>> importarTodasAbas(Path caminhoArquivo) throws IOException {
         Map<String, List<PlanilhaModel>> dadosPorAba = new HashMap<>();
 
@@ -29,6 +31,10 @@ public class ExcelImporter {
             int numeroDeAbas = workbook.getNumberOfSheets(); // Pega o número total de abas
             for (int abaIndex = 0; abaIndex < numeroDeAbas; abaIndex++) {
                 Sheet sheet = workbook.getSheetAt(abaIndex);
+
+                if (!abas.contains(sheet.getSheetName())) {
+                    continue;
+                }
                 System.out.println("aba: " + abaIndex);
                 List<PlanilhaModel> dadosAba = new ArrayList<>();
 
@@ -75,7 +81,9 @@ public class ExcelImporter {
 
                 dadosPorAba.put(sheet.getSheetName(), dadosAba); // Armazena os dados por aba
             }
+            fis.close();
         }
+
 
         return dadosPorAba;
     }

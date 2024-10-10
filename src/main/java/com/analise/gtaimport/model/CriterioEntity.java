@@ -5,9 +5,6 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
 
 @Entity(name = "Criterio")
 public class CriterioEntity extends DefaultEntity {

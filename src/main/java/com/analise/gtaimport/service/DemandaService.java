@@ -29,4 +29,8 @@ public class DemandaService {
     public DemandaEntity findByName(String name) {
         return demandaRepository.findRelacional(entityManager, name);
     }
+
+    public void deleteAll(){
+        demandaRepository.deleteAll();
+    }
 }
