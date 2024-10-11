@@ -50,7 +50,7 @@ public class ImportExcel implements CommandLineRunner {
     @Autowired
     private EmailService emailService;
 
-    private static String emailReport = "renildosousa75@gmail.com";
+    private static String emailReport = "codes@tceto.tc.br";
 
     @Override
     public void run(String... args) throws Exception {
@@ -61,7 +61,7 @@ public class ImportExcel implements CommandLineRunner {
 
         ExcelImporter importer = new ExcelImporter();
         try {
-            DownloadExcel.main(args);
+//            DownloadExcel.main(args);
             String filePath = "W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx";
 
             if (Files.exists(Path.of(filePath))) {
