@@ -88,63 +88,14 @@ public class ExcelImporter {
         return dadosPorAba;
     }
 
-    public List<PlanilhaModel> importar(Path caminhoArquivo) throws IOException {
-        List<PlanilhaModel> lista = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(caminhoArquivo.toFile());
-             Workbook workbook = new XSSFWorkbook(fis)) {
-
-            Sheet sheet = workbook.getSheetAt(0); // Pega a primeira aba
-            for (Integer i = 1; i <= sheet.getLastRowNum(); i++) { // Pula a linha de cabeçalho
-                Row row = sheet.getRow(i);
-                PlanilhaModel model = new PlanilhaModel();
-                if (row.getCell(0).getStringCellValue() == null || row.getCell(0).getStringCellValue().equals("")) {
-                    System.out.println("Aqui");
-                }
-                model.setDataSolicitacao(getLocalDateCellValue(row, 0));
-                model.setDocseiSolicitacao(getStringCellValue(row, 1));
-                model.setUnidadeSolicitante(getStringCellValue(row, 2));
-                model.setServidorDemandante(getStringCellValue(row, 3));
-                model.setSquad(getStringCellValue(row, 4));
-                model.setSistema(getStringCellValue(row, 5));
-                model.setTipoDemanda(getStringCellValue(row, 6));
-                model.setDescricaoSolicitacao(getStringCellValue(row, 7));
-                model.setObservacao(getStringCellValue(row, 8));
-                model.setStatus(getStringCellValue(row, 9));
-                model.setPrevisaoEntrega(getLocalDate2CellValue(row, 10));
-                model.setDataEntrega(getLocalDateCellValue(row, 11));
-                model.setDocSeiEntrega(getStringCellValue(row, 12));
-                model.setC1(getNumericCellValue(row, 13));
-                model.setC2_1(getNumericCellValue(row, 14));
-                model.setC2_2(getNumericCellValue(row, 15));
-                model.setC3_1(getNumericCellValue(row, 16));
-                model.setC4_1(getNumericCellValue(row, 17));
-                model.setC4_2(getNumericCellValue(row, 18));
-                model.setC4_3(getNumericCellValue(row, 19));
-                model.setC4_4(getNumericCellValue(row, 20));
-                model.setC4_5(getNumericCellValue(row,21));
-                model.setC5_1(getNumericCellValue(row, 22));
-                model.setC6_1(getNumericCellValue(row, 23));
-                model.setC6_2(getNumericCellValue(row, 24));
-                model.setC7_1(getNumericCellValue(row, 25));
-                model.setC8_1(getNumericCellValue(row, 26));
-                model.setC9_1(getNumericCellValue(row, 27));
-                model.setC10_1(getNumericCellValue(row, 28));
-                model.setScore(getNumericCellValue(row, 29));
-
-                if (model.getDataSolicitacao() == null) {
-                    System.out.println("Aquii");
-                }
-                lista.add(model);
-            }
-        }
-        return lista;
-    }
-
     private String getStringCellValue(Row row, Integer cellIndex) {
         if (row == null){
             return "";
         }
         Cell cell = row.getCell(cellIndex);
+        if (cell != null && cell.getCellType().equals(CellType.NUMERIC)) {
+            return String.valueOf(cell.getNumericCellValue());
+        }
         return cell != null ? cell.getStringCellValue() : "";
     }
 
