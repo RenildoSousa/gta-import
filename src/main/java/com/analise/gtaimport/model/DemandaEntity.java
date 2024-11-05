@@ -23,7 +23,10 @@ public class DemandaEntity extends DefaultEntity {
     
     @Column(name = "descricao")
     private String descricao;
-    
+
+    @Column(name = "tituloDemanda")
+    private String tituloDemanda;
+
     @Column(name = "observacao")
     private String observacao;
     
@@ -69,6 +72,7 @@ public class DemandaEntity extends DefaultEntity {
     public DemandaEntity(
             final LocalDateTime dataSolicitacao,
             final String documentoSeiSolicitacao,
+            final String tituloDemanda,
             final String descricao,
             final String observacao,
             final LocalDate previsaoEntrega,
@@ -198,5 +202,13 @@ public class DemandaEntity extends DefaultEntity {
     
     public void setListaClassificacao(final List<ItemCriterioEntity> listaClassificacao) {
         this.listaClassificacao = listaClassificacao;
+    }
+
+    public String getTituloDemanda() {
+        return tituloDemanda;
+    }
+
+    public void setTituloDemanda(String tituloDemanda) {
+        this.tituloDemanda = tituloDemanda;
     }
 }

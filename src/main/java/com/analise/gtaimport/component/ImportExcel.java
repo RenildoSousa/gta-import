@@ -101,7 +101,8 @@ public class ImportExcel implements CommandLineRunner {
         DemandaEntity demandaEntity = new DemandaEntity();
         demandaEntity.setDataSolicitacao(planilhaModel.getDataSolicitacao());
         demandaEntity.setDocumentoSeiSolicitacao(planilhaModel.getDocseiSolicitacao());
-        demandaEntity.setDescricao(planilhaModel.getDescricaoSolicitacao());
+        demandaEntity.setDescricao("<p>" + planilhaModel.getDescricaoSolicitacao() + "</p>");
+        demandaEntity.setTituloDemanda(planilhaModel.getDescricaoSolicitacao());
         demandaEntity.setObservacao(planilhaModel.getObservacao());
         demandaEntity.setPrevisaoEntrega(planilhaModel.getPrevisaoEntrega());
         demandaEntity.setDataEntrega(planilhaModel.getDataEntrega());
@@ -170,11 +171,11 @@ public class ImportExcel implements CommandLineRunner {
 
     }
 
-    public void apagarFile(){
+    public void apagarFile() {
         File file = new File("W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx");
 
         if (isFileInUse(file))
-            emailService.enviarEmail("renildosousa75@gmail.com", "Não foi possivel apagar a planilha","Alguém está com o arquivo W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx aberto!");
+            emailService.enviarEmail("renildosousa75@gmail.com", "Não foi possivel apagar a planilha", "Alguém está com o arquivo W:\\CODES\\Priorização de demandas\\Demandas CODES.xlsx aberto!");
 
         if (file.canWrite()) {
             if (file.delete()) {
